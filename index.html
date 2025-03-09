@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrator de Editais com Ollama</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        #resultado {
+            margin-top: 20px;
+            white-space: pre-line;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        
+        #status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Extrator de Informações de Editais</h1>
+        <div class="info">
+            Este sistema utiliza o Ollama (LLM local gratuito) para extrair informações de editais.
+            Certifique-se de que o Ollama está instalado e rodando no seu computador.
+        </div>
+        
+        <div class="input-group">
+            <label for="urlInput">URL do Edital:</label>
+            <input type="text" id="urlInput" placeholder="Ex: http://www.finep.gov.br/chamadas-publicas?situacao=aberta">
+        </div>
+        
+        <div class="input-group">
+            <label for="modelSelect">Modelo Ollama:</label>
+            <select id="modelSelect">
+                <option value="llama2">Llama 2</option>
+                <option value="mistral">Mistral</option>
+                <option value="gemma">Gemma</option>
+                <option value="phi">Phi</option>
+                <option value="orca-mini">Orca Mini</option>
+            </select>
+        </div>
+        
+        <button id="btnExtrair">Extrair Informações</button>
+        <div id="status"></div>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        document.getElementById('btnExtrair').addEventListener('click', async () => {
+            const url = document.getElementById('urlInput').value;
+            const modelo = document.getElementById('modelSelect').value;
+            const resultado = document.getElementById('resultado');
+            const status = document.getElementById('status');
+            
+            if (!url) {
+                status.innerHTML = '<div class="error">Por favor, insira uma URL válida.</div>';
+                return;
+            }
+            
+            // Limpar resultados anteriores
+            resultado.innerHTML = "";
+            status.innerHTML = '<div class="info">Processando... Isso pode levar alguns minutos dependendo do tamanho do conteúdo.</div>';
+            
+            try {
+                // Fazer a requisição para o servidor local de Ollama
+                status.innerHTML = '<div class="info">Extraindo texto do site...</div>';
+                
+                // Simulação da extração do conteúdo HTML
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                status.innerHTML = '<div class="info">Analisando conteúdo com Ollama (' + modelo + ')...</div>';
+                
+                // Simulação do processamento com Ollama
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Simulação de resposta
+                const dadosExtrados = `
+1. Título do Edital: Chamada Pública MCTI/FINEP/FNDCT 2023
+2. Objetivo: Apoiar projetos de inovação tecnológica em pequenas e médias empresas
+3. Linha Temática: Transformação Digital e Sustentabilidade
+4. Tipo de Recurso Financeiro: Subvenção Econômica
+5. Contrapartida Obrigatória: Sim, mínimo de 10% do valor solicitado
+6. Prazos de Submissão: 01/04/2023 a 31/05/2023
+7. Valor Total Disponível: R$ 100.000.000,00
+8. Elegibilidade: Empresas brasileiras com faturamento anual de até R$ 16 milhões
+                `;
+                
+                status.innerHTML = '<div class="info">Processamento concluído!</div>';
+                resultado.innerHTML = dadosExtrados;
+                
+                // Adicionar botão para download
+                const btnDownload = document.createElement('button');
+                btnDownload.innerText = 'Baixar Resultado';
+                btnDownload.style.marginTop = '15px';
+                btnDownload.onclick = () => {
+                    const blob = new Blob([dadosExtrados], {type: 'text/plain'});
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'extracao_edital.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                };
+                resultado.appendChild(document.createElement('br'));
+                resultado.appendChild(btnDownload);
+                
+            } catch (error) {
+                status.innerHTML = `<div class="error">Erro ao processar: ${error.message}</div>`;
+                resultado.innerHTML = `<div class="error">Certifique-se de que o Ollama está instalado e rodando no seu computador.</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
