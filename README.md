@@ -57,6 +57,12 @@ pip install -r requirements.txt
 python -m spacy download pt_core_news_lg
 ```
 
+### 4.1 Caso não funcione
+
+venv\Scripts\python.exe -m pip install spacy
+venv\Scripts\python.exe -m spacy download pt_core_news_lg
+
+
 ### 5. Instale o Ollama
 
 #### Windows:
